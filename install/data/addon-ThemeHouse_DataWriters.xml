@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="utf-8"?>
+<addon addon_id="ThemeHouse_DataWriters" title="[⌂] Data Writers" version_string="1.0.0" version_id="1447261019" url="http://xf.themehouse.io/" install_callback_class="ThemeHouse_Install" install_callback_method="install" uninstall_callback_class="ThemeHouse_Install" uninstall_callback_method="uninstall">
+  <admin_navigation>
+    <navigation navigation_id="dataWriters" parent_navigation_id="addOnDevelopment" display_order="100" link="data-writers" admin_permission_id="addOn" debug_only="0" hide_no_children="0"/>
+  </admin_navigation>
+  <admin_permissions/>
+  <admin_style_properties/>
+  <admin_templates>
+    <template title="th_controller_public_view_controllers"><![CDATA[<xen:title>{$controllerPublic.class}</xen:title>
+
+<xen:topctrl>
+	<a href="{xen:adminlink 'public-controllers/add-action', $controllerPublic}" class="button">+ {xen:phrase th_add_action_controllers}</a>
+	<a href="{xen:adminlink 'public-controllers/add-method', $controllerPublic}" class="button">+ {xen:phrase th_add_method_controllers}</a>
+</xen:topctrl>
+
+<xen:require css="filter_list.css" />
+<xen:require js="js/xenforo/filter_list.js" />
+
+<h2 class="subHeading">
+	{xen:phrase th_methods_controllers}
+</h2>
+
+<ul class="FilterList Scrollable">
+	<li>
+		<ol>
+			<xen:foreach loop="$methods" key="$methodName" value="$method">
+				<xen:listitem
+					id="{$methodName}"
+					href="{xen:adminlink 'public-controllers/edit-method', $controllerPublic, 'method={$methodName}'}"
+					label="{$methodName}"
+					snippet="{$method.declaringClass}"
+					delete="{xen:adminlink 'public-controllers/delete-method', $controllerPublic, 'method={$methodName}'}" />
+			</xen:foreach>
+		</ol>
+	</li>
+</ul>
+
+<p class="sectionFooter">{xen:phrase showing_x_of_y_items, 'count=<span class="FilterListCount">{xen:count $methods}</span>', 'total={xen:count $methods}'}</p>]]></template>
+    <template title="th_datawriter_add_datawriters"><![CDATA[<xen:title>{xen:phrase th_create_new_data_writer_datawriters}</xen:title>
+	
+<xen:form action="{xen:adminlink 'data-writers/save'}" class="AutoValidator" data-redirect="yes">
+
+	<xen:textboxunit name="class" label="{xen:phrase th_datawriter_class_datawriters}:" value="{$class}" />
+	<xen:textboxunit name="method" label="{xen:phrase th_get_by_id_method_datawriters}:" value="{$method}" />
+	<xen:textboxunit name="table" label="{xen:phrase th_database_table_name_datawriters}:" value="{$table}" />
+	<xen:textboxunit name="primary_key" label="{xen:phrase th_primary_key_datawriters}:" value="{$primaryKey}" />
+	<xen:selectunit name="primary_key_type" label="{xen:phrase th_primary_key_data_type_datawriters}:" value="{$primaryKeyType}">
+		<xen:options source="{$primaryKeyTypes}" />
+	</xen:selectunit>
+	<xen:checkboxunit label="">
+		<xen:option name="auto_increment" label="{xen:phrase th_auto_increment_datawriters}" value="1" selected="{$autoIncrement}" />
+	</xen:checkboxunit>
+
+	<input type="hidden" name="model" value="{$model}" />
+	<input type="hidden" name="addon_id" value="{$addOnSelected}" />
+
+	<xen:submitunit>
+		<input type="submit"  value="{xen:phrase th_create_data_writer_datawriters}" accesskey="s" class="button primary"  />
+	</xen:submitunit>
+</xen:form>]]></template>
+    <template title="th_datawriter_choose_model_datawriters"><![CDATA[<xen:title>{xen:phrase th_create_new_data_writer_datawriters}</xen:title>
+	
+<xen:form action="{xen:adminlink 'data-writers/add'}">
+
+	<xen:selectunit name="model" label="{xen:phrase th_model_datawriters}:">
+		<xen:options source="{$models}" />
+	</xen:selectunit>
+
+	<input type="hidden" name="addon_id" value="{$addOnSelected}" />
+
+	<xen:submitunit>
+		<input type="submit"  value="{xen:phrase continue}..." accesskey="s" class="button primary"  />
+	</xen:submitunit>
+</xen:form>]]></template>
+    <template title="th_datawriter_list_datawriters"><![CDATA[<xen:title>{xen:phrase th_data_writers_datawriters}</xen:title>
+
+<xen:topctrl>
+	<a href="{xen:if {$xenOptions.th_dataWriters_enableAddOnChooser}, {xen:adminlink 'add-ons/data-writers/add', {$addOns.{$addOnSelected}}}, {xen:adminlink 'data-writers/add'}}" class="button">+ {xen:phrase th_create_new_data_writer_datawriters}</a>
+</xen:topctrl>
+
+<xen:require css="filter_list.css" />
+<xen:require js="js/xenforo/filter_list.js" />
+
+<xen:if is="{$xenOptions.th_dataWriters_enableAddOnChooser}">
+	<div class="topChoosers">
+		<div class="Popup">
+			<span class="muted">{xen:phrase add_on}:</span> <a rel="Menu">{xen:if $addOnSelected, {$addOns.{$addOnSelected}.title}, '({xen:phrase unspecified})'}</a>
+			<div class="Menu">
+				<div class="primaryContent menuHeader"><h3>{xen:phrase add_on}</h3></div>
+				<ul class="secondaryContent blockLinksList">
+					<li><a href="{xen:adminlink 'add-ons/data-writers'}">({xen:phrase unspecified})</a></li>
+					<xen:foreach loop="$addOns" value="$addOn">
+						<li><a href="{xen:adminlink 'add-ons/data-writers', $addOn}">{$addOn.title}</a></li>
+					</xen:foreach>
+				</ul>
+			</div>
+		</div>
+	</div>
+</xen:if>
+
+<h2 class="subHeading">
+	<xen:include template="filter_list_controls" />
+	{xen:phrase th_data_writers_datawriters}
+</h2>
+
+<ul class="FilterList">
+	<xen:foreach loop="$addOns" value="$addOn">
+		<xen:if is="{$dataWriters.{$addOn.addon_id}}">
+			<li>
+				<h3 class="textHeading{xen:if '!{$addOn.active}', ' disabled'}">{$addOn.title}</h3>
+				<ol>
+				<xen:foreach loop="$dataWriters.{$addOn.addon_id}" value="$dataWriter">
+					<xen:listitem
+						id="{$dataWriter.class}"
+						href="{xen:adminlink 'data-writers/view', $dataWriter}"
+						label="{$dataWriter.filename}"
+						labelclass="{xen:if '!{$addOn.active}', ' parentDisabled'}"
+						snippet="{$dataWriter.class}"
+						delete="{xen:adminlink 'data-writers/delete', $dataWriter}" />
+				</xen:foreach>
+				</ol>
+			</li>
+		</xen:if>
+	</xen:foreach>
+</ul>
+
+<p class="sectionFooter">{xen:phrase showing_x_of_y_items, 'count=<span class="FilterListCount">{xen:number $dataWriterCount}</span>', 'total={xen:number $totalDataWriters}'}</p>]]></template>
+    <template title="th_datawriter_view_datawriters"><![CDATA[<xen:title>{$dataWriter.class}</xen:title>
+
+<xen:topctrl>
+	<a href="{xen:adminlink 'data-writers/add-field', $dataWriter}" class="button">+ {xen:phrase th_add_field_datawriters}</a>
+	<a href="{xen:adminlink 'data-writers/add-method', $dataWriter}" class="button">+ {xen:phrase th_add_method_datawriters}</a>
+</xen:topctrl>
+
+<xen:require css="filter_list.css" />
+<xen:require js="js/xenforo/filter_list.js" />
+
+<h2 class="subHeading">
+	{xen:phrase th_fields_datawriters}
+</h2>
+
+<ul class="FilterList Scrollable">
+	<xen:foreach loop="$fields" key="$tableName" value="$tableFields">
+		<li>
+			<h3 class="textHeading" style="text-align: right">
+				<span style="float: left">{$tableName}</span>
+				<span style="font-weight: normal">
+					<a href="{xen:adminlink 'data-writers/add-field', $dataWriter, 'table={$tableName}'}">{xen:phrase th_add_field_datawriters}</a>
+				</span>
+			</h3>
+			<ol>
+				<xen:foreach loop="$tableFields" key="$fieldName" value="$field">
+					<xen:listitem
+						id="{$tableName}[{$fieldName}]"
+						href="{xen:adminlink 'data-writers/edit-field', $dataWriter, 'table={$tableName}', 'field={$fieldName}'}"
+						label="{$fieldName}"
+						snippet="{$field.type}"
+						delete="{xen:adminlink 'data-writers/delete-field', $dataWriter, 'table={$tableName}', 'field={$fieldName}'}" />
+				</xen:foreach>
+			</ol>
+		</li>
+	</xen:foreach>
+</ul>
+
+<h2 class="subHeading">
+	{xen:phrase th_methods_datawriters}
+</h2>
+
+<ul class="FilterList Scrollable">
+	<li>
+		<ol>
+			<xen:foreach loop="$methods" key="$methodName" value="$method">
+				<xen:listitem
+					id="{$methodName}"
+					href="{xen:adminlink 'data-writers/edit-method', $dataWriter, 'method={$methodName}'}"
+					label="{$methodName}"
+					snippet="{$method.declaringClass}"
+					delete="{xen:adminlink 'data-writers/delete-method', $dataWriter, 'method={$methodName}'}" />
+			</xen:foreach>
+		</ol>
+	</li>
+</ul>
+
+<p class="sectionFooter">{xen:phrase showing_x_of_y_items, 'count=<span class="FilterListCount">{xen:count $methods}</span>', 'total={xen:count $methods}'}</p>]]></template>
+    <template title="th_field_add_datawriters"><![CDATA[<xen:title>{xen:phrase th_create_new_field_datawriters}</xen:title>
+	
+<xen:navigation>
+	<xen:breadcrumb href="{xen:adminlink 'data-writers/view', $dataWriter}">{$dataWriter.class}</xen:breadcrumb>
+</xen:navigation>
+
+<xen:form action="{xen:adminlink 'data-writers/save-field', $dataWriter}" class="AutoValidator" data-redirect="yes">
+
+	<xen:textboxunit name="table" label="{xen:phrase th_database_table_name_datawriters}:" value="{$field.table}" />
+	<xen:textboxunit name="name" label="{xen:phrase th_name_datawriters}:" value="{$field.name}" />
+	<xen:selectunit name="data_type" label="{xen:phrase th_data_type_datawriters}:" value="{$field.type}">
+		<xen:options source="{$dataTypes}" />
+	</xen:selectunit>
+	<xen:textboxunit name="default" label="{xen:phrase th_default_value_datawriters}:" value="{$field.default}" />
+	<xen:checkboxunit label="">
+		<xen:option name="auto_increment" label="{xen:phrase th_auto_increment_datawriters}" value="1" selected="{$field.auto_increment}" />
+	</xen:checkboxunit>
+
+	<xen:submitunit>
+		<input type="submit"  value="{xen:phrase th_create_field_datawriters}" accesskey="s" class="button primary"  />
+	</xen:submitunit>
+</xen:form>]]></template>
+    <template title="th_method_edit_datawriters"><![CDATA[<xen:title>{$method}</xen:title>
+
+<xen:if is="{$method} == '_getFields'">
+	<xen:topctrl>
+		<a href="{xen:adminlink 'data-writers/add-field', $dataWriter}" class="button">+ {xen:phrase th_add_field_datawriters}</a>
+	</xen:topctrl>
+</xen:if>
+
+<xen:navigation>
+	<xen:breadcrumb href="{xen:adminlink 'data-writers/view', $dataWriter}">{$dataWriter.class}</xen:breadcrumb>
+</xen:navigation>
+	
+<xen:form action="{xen:adminlink 'data-writers/save-method', $dataWriter, 'method={$method}'}" class="AutoValidator" data-redirect="yes">
+	<xen:include template="th_helper_method_edit_reflection" />
+
+	<xen:submitunit>
+		<input type="submit"  value="{xen:phrase save_changes}" accesskey="s" class="button primary"  />
+		<input type="button" name="delete" value="{xen:phrase th_delete_method_datawriters}..."
+			accesskey="d" class="button OverlayTrigger"
+			data-href="{xen:adminlink data-writers/delete-method, $model, 'method={$method}'}"
+		/>
+	</xen:submitunit>
+</xen:form>]]></template>
+  </admin_templates>
+  <admin_template_modifications/>
+  <code_events/>
+  <code_event_listeners>
+    <listener event_id="controller_pre_dispatch" execute_order="10" callback_class="ThemeHouse_Listener_ControllerPreDispatch" callback_method="controllerPreDispatch" active="1" hint="" description=""/>
+    <listener event_id="file_health_check" execute_order="10" callback_class="ThemeHouse_DataWriters_Listener_FileHealthCheck" callback_method="fileHealthCheck" active="1" hint="" description=""/>
+    <listener event_id="init_dependencies" execute_order="10" callback_class="ThemeHouse_Listener_InitDependencies" callback_method="initDependencies" active="1" hint="" description=""/>
+    <listener event_id="load_class" execute_order="10" callback_class="ThemeHouse_DataWriters_Listener_LoadClass" callback_method="loadClassRoutePrefix" active="0" hint="XenForo_Route_PrefixAdmin_AddOns" description="XenForo_Route_PrefixAdmin_AddOns (For XenForo 1.2 and above)" compatibility_switch="1"/>
+    <listener event_id="load_class_route_prefix" execute_order="10" callback_class="ThemeHouse_DataWriters_Listener_LoadClass" callback_method="loadClassRoutePrefix" active="1" hint="" description="(For XenForo 1.1 and below)" compatibility_switch="1"/>
+  </code_event_listeners>
+  <cron/>
+  <email_templates/>
+  <email_template_modifications/>
+  <optiongroups>
+    <group group_id="th_dataWriters" display_order="2000" debug_only="0"/>
+  </optiongroups>
+  <permissions>
+    <permission_groups/>
+    <permissions/>
+    <interface_groups/>
+  </permissions>
+  <phrases>
+    <phrase title="admin_navigation_dataWriters" version_id="1418817810" version_string="1.0.0"><![CDATA[List Data Writers]]></phrase>
+    <phrase title="option_group_th_dataWriters" version_id="1418817810" version_string="1.0.0"><![CDATA[[⌂] Data Writers]]></phrase>
+    <phrase title="option_group_th_dataWriters_description" version_id="1418817810" version_string="1.0.0"><![CDATA[Options for the [⌂] Data Writers add-on.]]></phrase>
+    <phrase title="th_add_field_datawriters" version_id="1420458969" version_string="1.0.0"><![CDATA[Add Field]]></phrase>
+    <phrase title="th_add_method_datawriters" version_id="1418817810" version_string="1.0.0"><![CDATA[Add Method]]></phrase>
+    <phrase title="th_auto_increment_datawriters" version_id="1418817810" version_string="1.0.0"><![CDATA[Auto-Increment?]]></phrase>
+    <phrase title="th_create_data_writer_datawriters" version_id="1418817810" version_string="1.0.0"><![CDATA[Create Data Writer]]></phrase>
+    <phrase title="th_create_field_datawriters" version_id="1420458969" version_string="1.0.0"><![CDATA[Create Field]]></phrase>
+    <phrase title="th_create_new_data_writer_datawriters" version_id="1418817810" version_string="1.0.0"><![CDATA[Create New Data Writer]]></phrase>
+    <phrase title="th_create_new_field_datawriters" version_id="1420458969" version_string="1.0.0"><![CDATA[Create New Field]]></phrase>
+    <phrase title="th_database_table_name_datawriters" version_id="1418817810" version_string="1.0.0"><![CDATA[Database Table Name]]></phrase>
+    <phrase title="th_datawriter_class_datawriters" version_id="1418817810" version_string="1.0.0"><![CDATA[Data Writer Class]]></phrase>
+    <phrase title="th_data_type_datawriters" version_id="1420458969" version_string="1.0.0"><![CDATA[Data Type]]></phrase>
+    <phrase title="th_data_writers_datawriters" version_id="1418817810" version_string="1.0.0"><![CDATA[Data Writers]]></phrase>
+    <phrase title="th_default_value_datawriters" version_id="1422115956" version_string="1.0.0"><![CDATA[Default Value]]></phrase>
+    <phrase title="th_delete_method_datawriters" version_id="1418817810" version_string="1.0.0"><![CDATA[Delete Method]]></phrase>
+    <phrase title="th_fields_datawriters" version_id="1418817810" version_string="1.0.0"><![CDATA[Fields]]></phrase>
+    <phrase title="th_get_by_id_method_datawriters" version_id="1418817810" version_string="1.0.0"><![CDATA[GetByID Method]]></phrase>
+    <phrase title="th_methods_datawriters" version_id="1418817810" version_string="1.0.0"><![CDATA[Methods]]></phrase>
+    <phrase title="th_model_datawriters" version_id="1418817810" version_string="1.0.0"><![CDATA[Model]]></phrase>
+    <phrase title="th_name_datawriters" version_id="1420458969" version_string="1.0.0"><![CDATA[Name]]></phrase>
+    <phrase title="th_no_models_in_this_addon_datawriter" version_id="1418817810" version_string="1.0.0"><![CDATA[There are no models in this add-on.]]></phrase>
+    <phrase title="th_primary_key_datawriters" version_id="1418817810" version_string="1.0.0"><![CDATA[Primary Key]]></phrase>
+    <phrase title="th_primary_key_data_type_datawriters" version_id="1418817810" version_string="1.0.0"><![CDATA[Primary Key Data Type]]></phrase>
+  </phrases>
+  <route_prefixes>
+    <route_type type="admin">
+      <prefix original_prefix="data-writers" class="ThemeHouse_DataWriters_Route_PrefixAdmin_DataWriters" build_link="data_only"/>
+    </route_type>
+  </route_prefixes>
+  <style_properties/>
+  <templates/>
+  <public_template_modifications>
+    <modification template="footer" modification_key="th_copyrightNotice_dataWriters" description="Copyright notice for [⌂] Data Writers" execution_order="1" enabled="1" action="callback">
+      <find><![CDATA[/{xen:phrase (?:xenforo|extra)_copyright}/]]></find>
+      <replace><![CDATA[ThemeHouse_Listener_InitDependencies::copyrightNotice]]></replace>
+    </modification>
+  </public_template_modifications>
+  <bb_code_media_sites/>
+  <bb_codes/>
+</addon>
